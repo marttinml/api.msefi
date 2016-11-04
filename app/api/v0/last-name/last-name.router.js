@@ -1,10 +1,10 @@
 module.exports = function (app) {
-    var Test = require('./test.controller');
+    var LastName = require('./last-name.controller');
     
-    app.route('/v0/test').post(Test.create);
-    app.route('/v0/test').get(Test.retrieve);
-    app.route('/v0/test/:id').get(Test.detail);
-    app.route('/v0/test/:id').patch(Test.update);
-    app.route('/v0/test/:id').put(Test.replace);
-    app.route('/v0/test/:id').delete(Test.delete);
+    //app.route('/v0/last-name').post(LastName.create);
+    app.route('/v0/last-nameAll').post(LastName.createAll);
+    app.route('/v0/last-name').get(LastName.retrieve);
+    app.route('/v0/last-name/:id').get(LastName.detail);
+    app.route('/v0/last-name/:id').put(LastName.update);
+    app.route('/v0/last-name/:id').delete(LastName.delete);
 };

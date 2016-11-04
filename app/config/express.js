@@ -29,6 +29,11 @@ module.exports = function(){
     
     for (i in VERSIONS) {
         require('../api' + VERSIONS[i] + 'test/test.router')(app);
+        require('../api' + VERSIONS[i] + 'name/name.router')(app);
+        require('../api' + VERSIONS[i] + 'last-name/last-name.router')(app);
+        require('../api' + VERSIONS[i] + 'people/people.router')(app);
+        require('../api' + VERSIONS[i] + 'membership/membership.router')(app);
+        require('../api' + VERSIONS[i] + 'build/build.router')(app);
     }
 
     return app;

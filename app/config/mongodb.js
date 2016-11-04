@@ -1,7 +1,7 @@
 var assert = require('assert');
 	MongoClient = require('mongodb').MongoClient,
-	// url         = 'mongodb://2school666:25ch001666@ds043324.mongolab.com:43324/2school',
-	url         = 'mongodb://localhost/msefi';
+	url         = 'mongodb://usrsefi:passsefi@ds029814.mongolab.com:29814/sefi',
+	//url         = 'mongodb://localhost/msefi';
 
 module.exports.ejecute = function (handler) {
 	MongoClient.connect(url, handler);

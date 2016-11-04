@@ -1,92 +1,103 @@
 var ObjectId = require('mongodb').ObjectID;
-var hex = /[0-9A-Fa-f]{6}/g;
+var autoIncrement = require("mongodb-autoincrement");
+var collection = "membership";
 
 module.exports.create = function(db, data, callback) {
-  //var valid = Util.validateModel(data, { required:['key'], number:['key'], string:['name','description'] });
-  var valid = true;
-  if(valid){
-      db.collection('test').insertOne( {
-          title            : data.title,
-          description     : data.description,
-          date            : new Date(),
+  autoIncrement.getNextSequence(db, collection, function (err, id) {
+      db.collection(collection).insertOne( {
+          id              : id,
+          user            : data.user,
+          pass            : data.pass,
+          name            : data.name,
+          tocken          : '',
+          status          : { active : true, description: "Active"},
+          date            : new Date()
       }, function(err, result){
-          result.ops[0].id = result.ops[0]._id;
-          delete result.ops[0]._id;
-          delete result.ops[0].date;
-          callback(err, result.ops[0], 200);
+          module.exports.detail(db, id, function(err, result, status){
+            callback(err, result, 201);
+          });
       } );
-  }else{
-    callback(null, 'Invalid Model', 201);
-  }
+  });
 };
 
 module.exports.retrieve = function(db, callback) {
    var result = [];
-   var cursor = db.collection('test').find({});
+   var cursor = db.collection(collection).find({},{
+    user: true,
+    pass: true,
+    name: true,
+    tocken: true,
+    status: true,
+    id: true,
+    _id: false
+   });
    cursor.each(function(err, doc) {
       if (doc != null) {
-          doc.id = doc._id;
-          delete doc._id;
-          delete doc.date;
           result.push(doc);
       } else {
-         callback(result);
+         callback(err, result, 200);
       }
    });
 };
 
 module.exports.detail = function(db, id, callback) {
-   var result = {}; 
-   id = (hex.test(id))? ObjectId(id) : id;
-   var cursor = db.collection('test').find({ _id : id });
-   cursor.each(function(err, doc) {
-      if (doc != null) {
-          doc.id = doc._id;
-          delete doc._id;
-          delete doc.date;
-          result = doc;
-      } else {
-         callback(result);
-      }
-   });
+   var result = {};
+   var cursor = db.collection(collection).findOne({ id : id },
+    {
+      user: true,
+      pass: true,
+      name: true,
+      tocken: true,
+      status: true,
+      id: true,
+      _id: false
+    },function(err, result){
+      callback(err, result, 200);
+    });
 };
 
 module.exports.update = function(db, id, data, callback) {
-  id = (hex.test(id))? ObjectId(id) : id;
-  db.collection('test').updateOne(
-        { _id : id },
+  db.collection(collection).updateOne(
+        { id : id },
         {
           $set: {
-            title:data.title,
-            description:data.description
+            user            : data.user,
+            pass            : data.pass,
+            name            : data.name
           },
           $currentDate: { "lastModified": true }
         },function(err, results) {
-            callback(err, data, 200);
-        }
-    );
-};
-
-module.exports.replace = function(db, id, data, callback) {
-   db.collection('test').replaceOne(
-        { _id : ObjectId(id) },
-        data
-        ,function(err, results) {
-            data.id = id;
-            callback(err, data, 200);
+          module.exports.detail(db, id, function(err, result, status){
+            callback(err, result, status);
+          });
         }
     );
 };
 
 module.exports.delete = function(db, id, callback) {
-  id = (hex.test(id))? ObjectId(id) : id;
-  module.exports.detail(db, id, function(result){
-      db.collection('test').deleteMany(
-        { _id : id },
+  module.exports.detail(db, id, function(err, result, status){
+      db.collection(collection).deleteMany(
+        { id : id },
         function(err, results) {
-            callback(err, result, 200);
+            callback(err, result, status);
         }
     );
   });
    
+};
+
+
+module.exports.login = function(db, user, callback) {
+   var result = false;
+   var cursor = db.collection(collection).findOne({ user : user.user , pass : user.pass},
+    {
+      user: true,
+      name: true,
+      tocken: true,
+      status: true,
+      id: true,
+      _id: false
+    },function(err, result){
+      callback(err, result, 200);
+    });
 };
