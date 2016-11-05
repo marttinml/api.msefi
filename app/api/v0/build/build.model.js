@@ -154,7 +154,7 @@ var factory = function(body){
     data.cp          = $scope.baseAddress.cp;
     data.section     = $scope.baseAddress.section;
     data.registerYear= (Number($scope.birthdate.year) + 1918) + ' 00';
-    data.sex         = $scope.sex.id;
+    data.sex         = $scope.sex;
     data.picture     = $scope.picture;
     data.pictureSign = $scope.pictureSign;
 
