@@ -195,7 +195,7 @@ var fillData = function(peopleList, nameListBySex, lastNameList, data){
   var im=0;
   for(var i = 0; i < data.dataLength; i++){
     var dataTemp = JSON.parse(JSON.stringify(data));
-    dataTemp.name = peopleList[i].sex === 'h' ? nameH[ih++].name : nameM[im++].name;
+    dataTemp.name = peopleList[i].sex === 'H' ? nameH[ih++].name : nameM[im++].name;
     dataTemp.lastName1 = lastNameList1[i].lastname;
     dataTemp.lastName2 = lastNameList2[i].lastname;
     dataTemp.sex = peopleList[i].sex;
