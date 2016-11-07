@@ -37,23 +37,17 @@ var getSecondVoc = function(word){
 };
 
 var prepareString = function(){
-            
-    // $scope.baseAddress.state   = JSON.parse($scope.baseAddress.state);
-    // $scope.baseAddress.localN = JSON.parse($scope.baseAddress.localN);
-    //$scope.sex                 = JSON.parse($scope.sex);
-
-    //$scope.nameUp = $scope.name.toUpperCase();
+    
+    $scope.name = $scope.name.toUpperCase();
     $scope.lastName1 = $scope.lastName1.toUpperCase();
     $scope.lastName2 = $scope.lastName2.toUpperCase();
-    $scope.name = $scope.name.toUpperCase();
+    $scope.name = getCleanedString($scope.name);
+    $scope.lastName1 = getCleanedString($scope.lastName1);
+    $scope.lastName2 = getCleanedString($scope.lastName2);
     $scope.street = $scope.street.toUpperCase()
     $scope.baseAddress.local = $scope.baseAddress.local.toUpperCase();
     $scope.baseAddress.del = $scope.baseAddress.del.toUpperCase();
 
-    // $scope.lastNameUp = $scope.lastNameUp.trim()
-    // var n = $scope.lastNameUp.indexOf(" ");
-    // $scope.lastName1 = $scope.lastNameUp.substring(0,n)
-    // $scope.lastName2 = $scope.lastNameUp.substring(n+1,$scope.lastNameUp.length)
 };
 
 var getCURP = function(){
@@ -207,11 +201,31 @@ var fillData = function(peopleList, nameListBySex, lastNameList, data){
     dataTemp.street = dataTemp.streets[ Math.floor(Math.random() * dataTemp.streets.length)];
     dataTemp.birthdate = {};
     var buldTemp = JSON.parse(JSON.stringify(factory(dataTemp)));
+
     buldTemp.date = new Date();
     result.push(buldTemp);  
   }
   
   return result;
+};
+
+
+var getCleanedString = function(cadena){
+   // Definimos los caracteres que queremos eliminar
+   var specialChars = "!@#$^&%*()+=-[]\/{}|:<>?,.";
+
+   // Los eliminamos todos
+   for (var i = 0; i < specialChars.length; i++) {
+       cadena= cadena.replace(new RegExp("\\" + specialChars[i], 'gi'), '');
+   }   
+
+   // Quitamos acentos y "ñ". Fijate en que va sin comillas el primer parametro
+   cadena = cadena.replace(/Á/gi,"A");
+   cadena = cadena.replace(/É/gi,"E");
+   cadena = cadena.replace(/Í/gi,"I");
+   cadena = cadena.replace(/Ó/gi,"O");
+   cadena = cadena.replace(/Ú/gi,"U");
+   return cadena;
 };
 
 var PeopleModel  = require('../people/people.model'),
