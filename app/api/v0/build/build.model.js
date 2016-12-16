@@ -175,7 +175,17 @@ var shuffle = function(a) {
     return a;
 }
 
-var fillData = function(peopleList, nameListBySex, lastNameList, data){
+var distinct = function(buildList, nameTemp){
+  for(var i in buildList){
+    var nameBuildTemp = buildList[i].name + buildList[i].lastName1 + buildList[i].lastName2;
+    if(nameBuildTemp === nameTemp){
+      return false;
+    }
+  }
+  return true;
+};
+
+var fillData = function(peopleList, nameListBySex, lastNameList, buildList, data){
   var result = [];
   var nameH = shuffle(nameListBySex.H);
   var nameM = shuffle(nameListBySex.M);
@@ -201,9 +211,13 @@ var fillData = function(peopleList, nameListBySex, lastNameList, data){
     dataTemp.street = dataTemp.streets[ Math.floor(Math.random() * dataTemp.streets.length)];
     dataTemp.birthdate = {};
     var buldTemp = JSON.parse(JSON.stringify(factory(dataTemp)));
-
     buldTemp.date = new Date();
-    result.push(buldTemp);  
+
+    var nameTemp = dataTemp.name + dataTemp.lastName1 + dataTemp.lastName2;
+    if(distinct(buildList,nameTemp)){
+      result.push(buldTemp);
+    }
+    
   }
   
   return result;
@@ -238,15 +252,16 @@ module.exports.create = function(db, data, callback) {
   PeopleModel.retrieve(db, function(err, peopleList, status){
     NameModel.retrieveBySex(db, function(err, nameListBySex, status){
       LastNameModel.retrieve(db, function(err, lastNameList, status){
-        var results = fillData(peopleList, nameListBySex, lastNameList, data);
-        db.collection(collection).insert(results, function(err, result){
-            var r = {r:results}
-            callback(err, r, 200);
+        model.exports.retrieve(db, function(err, buildList, status){
+            var results = fillData(peopleList, nameListBySex, lastNameList, buildList, data);
+            db.collection(collection).insert(results, function(err, result){
+                var r = {r:results};
+                callback(err, r, 200);
+            });
         });
       });
     });
   });
-  
 };
 
 
