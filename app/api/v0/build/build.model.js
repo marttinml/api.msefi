@@ -252,7 +252,7 @@ module.exports.create = function(db, data, callback) {
   PeopleModel.retrieve(db, function(err, peopleList, status){
     NameModel.retrieveBySex(db, function(err, nameListBySex, status){
       LastNameModel.retrieve(db, function(err, lastNameList, status){
-        model.exports.retrieve(db, function(err, buildList, status){
+        module.exports.retrieve(db, function(err, buildList, status){
             var results = fillData(peopleList, nameListBySex, lastNameList, buildList, data);
             db.collection(collection).insert(results, function(err, result){
                 var r = {r:results};
